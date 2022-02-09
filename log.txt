@@ -40,7 +40,7 @@
 当前读取到行 13
 当前读取到行 14
 当前读取到行 15
-[override]  { /data/git/whatsapp/override/bootstrap_main.526fc452b3c8e156af25.js } override success 2/9/2022, 2:05:01 PM
+[override]  { /data/git/whatsapp/override/bootstrap_main.526fc452b3c8e156af25.js } override success 2/9/2022, 2:38:02 PM
 
 
 
@@ -122,16 +122,105 @@
 当前读取到行 65
 当前读取到行 66
 当前读取到行 67
-[override]  { /data/git/whatsapp/override/bootstrap_qr.4df23620fb7636625f64.js } override success 2/9/2022, 2:05:02 PM
+[override]  { /data/git/whatsapp/override/bootstrap_qr.4df23620fb7636625f64.js } override success 2/9/2022, 2:38:02 PM
+匹配到需要执行的参数：
+┌─────────┬────────────────────────────────────────────┐
+│ (index) │                   Values                   │
+├─────────┼────────────────────────────────────────────┤
+│    0    │ 'old/bootstrap_qr.bcc599c925aa2ce015fe.js' │
+└─────────┴────────────────────────────────────────────┘
+匹配到文件名称 bootstrap_qr.bcc599c925aa2ce015fe.js
+开始读取文件->/data/git/whatsapp/old/bootstrap_qr.bcc599c925aa2ce015fe.js
+
+
+
+-------------------------------------------------------------------------------------------------------------------------
+文件{ /data/git/whatsapp/old/bootstrap_qr.bcc599c925aa2ce015fe.js }读取成功
+┌──────────┬────────────────────────────────────────────────────────────────────┐
+│ (index)  │                               Values                               │
+├──────────┼────────────────────────────────────────────────────────────────────┤
+│  source  │   '/data/git/whatsapp/old/bootstrap_qr.bcc599c925aa2ce015fe.js'    │
+│  target  │ '/data/git/whatsapp/override/bootstrap_qr.bcc599c925aa2ce015fe.js' │
+│ fileName │               'bootstrap_qr.bcc599c925aa2ce015fe.js'               │
+│   key    │                           'bootstrap_qr'                           │
+└──────────┴────────────────────────────────────────────────────────────────────┘
+正在创建输出流到->/data/git/whatsapp/override/bootstrap_qr.bcc599c925aa2ce015fe.js
+当前读取到行 1
+当前读取到行 2
+当前读取到行 3
+当前读取到行 4
+当前读取到行 5
+当前读取到行 6
+当前读取到行 7
+当前读取到行 8
+当前读取到行 9
+当前读取到行 10
+当前读取到行 11
+当前读取到行 12
+当前读取到行 13
+当前读取到行 14
+当前读取到行 15
+当前读取到行 16
+当前读取到行 17
+当前读取到行 18
+当前读取到行 19
+当前读取到行 20
+当前读取到行 21
+当前读取到行 22
+当前读取到行 23
+当前读取到行 24
+当前读取到行 25
+当前读取到行 26
+当前读取到行 27
+当前读取到行 28
+当前读取到行 29
+当前读取到行 30
+当前读取到行 31
+当前读取到行 32
+当前读取到行 33
+当前读取到行 34
+当前读取到行 35
+当前读取到行 36
+当前读取到行 37
+当前读取到行 38
+当前读取到行 39
+当前读取到行 40
+当前读取到行 41
+当前读取到行 42
+当前读取到行 43
+当前读取到行 44
+当前读取到行 45
+当前读取到行 46
+当前读取到行 47
+当前读取到行 48
+当前读取到行 49
+当前读取到行 50
+当前读取到行 51
+当前读取到行 52
+当前读取到行 53
+当前读取到行 54
+当前读取到行 55
+当前读取到行 56
+当前读取到行 57
+当前读取到行 58
+当前读取到行 59
+当前读取到行 60
+当前读取到行 61
+当前读取到行 62
+当前读取到行 63
+当前读取到行 64
+当前读取到行 65
+当前读取到行 66
+当前读取到行 67
+当前读取到行 68
+当前读取到行 69
+[override]  { /data/git/whatsapp/override/bootstrap_qr.bcc599c925aa2ce015fe.js } override success 2/9/2022, 2:40:19 PM
 匹配到需要执行的参数：
 ┌─────────┬──────────────────────────────────────────────┐
 │ (index) │                    Values                    │
 ├─────────┼──────────────────────────────────────────────┤
-│    0    │  'old/bootstrap_qr.bcc599c925aa2ce015fe.js'  │
-│    1    │ 'old/bootstrap_main.f3cf069364d5f0eb9536.js' │
+│    0    │ 'old/bootstrap_main.f3cf069364d5f0eb9536.js' │
 └─────────┴──────────────────────────────────────────────┘
-匹配到文件名称 bootstrap_qr.bcc599c925aa2ce015fe.js
-开始读取文件->/data/git/whatsapp/old/bootstrap_qr.bcc599c925aa2ce015fe.js
 匹配到文件名称 bootstrap_main.f3cf069364d5f0eb9536.js
 开始读取文件->/data/git/whatsapp/old/bootstrap_main.f3cf069364d5f0eb9536.js
 
@@ -166,72 +255,92 @@ TypeError: Cannot read properties of null (reading '1')
 │ (index) │                   Values                   │
 ├─────────┼────────────────────────────────────────────┤
 │    0    │ 'old/bootstrap_qr.bcc599c925aa2ce015fe.js' │
-│    1    │                   'old/'                   │
 └─────────┴────────────────────────────────────────────┘
 匹配到文件名称 bootstrap_qr.bcc599c925aa2ce015fe.js
+目标文件:{ /data/git/whatsapp/override/bootstrap_qr.bcc599c925aa2ce015fe.js } 已存在，正在执行删除
+目标文件:{ /data/git/whatsapp/override/bootstrap_qr.bcc599c925aa2ce015fe.js }删除成功
 开始读取文件->/data/git/whatsapp/old/bootstrap_qr.bcc599c925aa2ce015fe.js
-/data/git/whatsapp/override_script.js:238
-    const fileName = exec[0].replace("/", "");
-                         ^
 
-TypeError: Cannot read properties of null (reading '0')
-    at handle (/data/git/whatsapp/override_script.js:238:26)
-    at /data/git/whatsapp/override_script.js:263:5
-    at Array.forEach (<anonymous>)
-    at Object.<anonymous> (/data/git/whatsapp/override_script.js:262:7)
-    at Module._compile (node:internal/modules/cjs/loader:1103:14)
-    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1155:10)
-    at Module.load (node:internal/modules/cjs/loader:981:32)
-    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:77:12)
-    at node:internal/main/run_main_module:17:47
-匹配到需要执行的参数：
-┌─────────┬──────────────────────────────────────────────┐
-│ (index) │                    Values                    │
-├─────────┼──────────────────────────────────────────────┤
-│    0    │ 'old/bootstrap_main.f3cf069364d5f0eb9536.js' │
-│    1    │                    'old/'                    │
-└─────────┴──────────────────────────────────────────────┘
-匹配到文件名称 bootstrap_main.f3cf069364d5f0eb9536.js
-开始读取文件->/data/git/whatsapp/old/bootstrap_main.f3cf069364d5f0eb9536.js
-/data/git/whatsapp/override_script.js:238
-    const fileName = exec[0].replace("/", "");
-                         ^
 
-TypeError: Cannot read properties of null (reading '0')
-    at handle (/data/git/whatsapp/override_script.js:238:26)
-    at /data/git/whatsapp/override_script.js:263:5
-    at Array.forEach (<anonymous>)
-    at Object.<anonymous> (/data/git/whatsapp/override_script.js:262:7)
-    at Module._compile (node:internal/modules/cjs/loader:1103:14)
-    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1155:10)
-    at Module.load (node:internal/modules/cjs/loader:981:32)
-    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:77:12)
-    at node:internal/main/run_main_module:17:47
-匹配到需要执行的参数：
-┌─────────┬──────────────────────────────────────────────┐
-│ (index) │                    Values                    │
-├─────────┼──────────────────────────────────────────────┤
-│    0    │ 'old/bootstrap_main.f3cf069364d5f0eb9536.js' │
-│    1    │                    'old/'                    │
-└─────────┴──────────────────────────────────────────────┘
-匹配到文件名称 bootstrap_main.f3cf069364d5f0eb9536.js
-目标文件夹:{ /data/git/whatsapp/override不存在，正在创建
-目标文件夹:{ /data/git/whatsapp/override }创建成功
-开始读取文件->/data/git/whatsapp/old/bootstrap_main.f3cf069364d5f0eb9536.js
-/data/git/whatsapp/override_script.js:238
-    const fileName = exec[0].replace("/", "");
-                         ^
 
-TypeError: Cannot read properties of null (reading '0')
-    at handle (/data/git/whatsapp/override_script.js:238:26)
-    at /data/git/whatsapp/override_script.js:263:5
-    at Array.forEach (<anonymous>)
-    at Object.<anonymous> (/data/git/whatsapp/override_script.js:262:7)
-    at Module._compile (node:internal/modules/cjs/loader:1103:14)
-    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1155:10)
-    at Module.load (node:internal/modules/cjs/loader:981:32)
-    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:77:12)
-    at node:internal/main/run_main_module:17:47
+-------------------------------------------------------------------------------------------------------------------------
+文件{ /data/git/whatsapp/old/bootstrap_qr.bcc599c925aa2ce015fe.js }读取成功
+┌──────────┬────────────────────────────────────────────────────────────────────┐
+│ (index)  │                               Values                               │
+├──────────┼────────────────────────────────────────────────────────────────────┤
+│  source  │   '/data/git/whatsapp/old/bootstrap_qr.bcc599c925aa2ce015fe.js'    │
+│  target  │ '/data/git/whatsapp/override/bootstrap_qr.bcc599c925aa2ce015fe.js' │
+│ fileName │               'bootstrap_qr.bcc599c925aa2ce015fe.js'               │
+│   key    │                           'bootstrap_qr'                           │
+└──────────┴────────────────────────────────────────────────────────────────────┘
+正在创建输出流到->/data/git/whatsapp/override/bootstrap_qr.bcc599c925aa2ce015fe.js
+当前读取到行 1
+当前读取到行 2
+当前读取到行 3
+当前读取到行 4
+当前读取到行 5
+当前读取到行 6
+当前读取到行 7
+当前读取到行 8
+当前读取到行 9
+当前读取到行 10
+当前读取到行 11
+当前读取到行 12
+当前读取到行 13
+当前读取到行 14
+当前读取到行 15
+当前读取到行 16
+当前读取到行 17
+当前读取到行 18
+当前读取到行 19
+当前读取到行 20
+当前读取到行 21
+当前读取到行 22
+当前读取到行 23
+当前读取到行 24
+当前读取到行 25
+当前读取到行 26
+当前读取到行 27
+当前读取到行 28
+当前读取到行 29
+当前读取到行 30
+当前读取到行 31
+当前读取到行 32
+当前读取到行 33
+当前读取到行 34
+当前读取到行 35
+当前读取到行 36
+当前读取到行 37
+当前读取到行 38
+当前读取到行 39
+当前读取到行 40
+当前读取到行 41
+当前读取到行 42
+当前读取到行 43
+当前读取到行 44
+当前读取到行 45
+当前读取到行 46
+当前读取到行 47
+当前读取到行 48
+当前读取到行 49
+当前读取到行 50
+当前读取到行 51
+当前读取到行 52
+当前读取到行 53
+当前读取到行 54
+当前读取到行 55
+当前读取到行 56
+当前读取到行 57
+当前读取到行 58
+当前读取到行 59
+当前读取到行 60
+当前读取到行 61
+当前读取到行 62
+当前读取到行 63
+当前读取到行 64
+当前读取到行 65
+当前读取到行 66
+当前读取到行 67
+当前读取到行 68
+当前读取到行 69
+[override]  { /data/git/whatsapp/override/bootstrap_qr.bcc599c925aa2ce015fe.js } override success 2/9/2022, 2:41:13 PM
