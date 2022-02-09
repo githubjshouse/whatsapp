@@ -232,7 +232,8 @@ const override = (param) => {
 
 const handle = (param) => {
     const source = path.join(__dirname, param);
-    const exec = /([^.]+)\.?([^.]*)\.js/.exec(param)
+    
+    const exec = /([^.]+)\.?([^.]*)\.js/.exec(param.substring(param.lastIndexOf("/")+1))
 
     const fileName = exec[0].replace("/", "");
     const targetDir = path.join(__dirname, "override");
