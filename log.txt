@@ -344,3 +344,43 @@ TypeError: Cannot read properties of null (reading '1')
 当前读取到行 68
 当前读取到行 69
 [override]  { /data/git/whatsapp/override/bootstrap_qr.bcc599c925aa2ce015fe.js } override success 2/9/2022, 2:41:13 PM
+匹配到需要执行的参数：
+┌─────────┬──────────────────────────────────────────────┐
+│ (index) │                    Values                    │
+├─────────┼──────────────────────────────────────────────┤
+│    0    │ 'old/bootstrap_main.f3cf069364d5f0eb9536.js' │
+│    1    │  'old/bootstrap_qr.bcc599c925aa2ce015fe.js'  │
+└─────────┴──────────────────────────────────────────────┘
+匹配到文件名称 bootstrap_main.f3cf069364d5f0eb9536.js
+开始读取文件->/data/git/whatsapp/old/bootstrap_main.f3cf069364d5f0eb9536.js
+匹配到文件名称 bootstrap_qr.bcc599c925aa2ce015fe.js
+目标文件:{ /data/git/whatsapp/override/bootstrap_qr.bcc599c925aa2ce015fe.js } 已存在，正在执行删除
+目标文件:{ /data/git/whatsapp/override/bootstrap_qr.bcc599c925aa2ce015fe.js }删除成功
+开始读取文件->/data/git/whatsapp/old/bootstrap_qr.bcc599c925aa2ce015fe.js
+
+
+
+-------------------------------------------------------------------------------------------------------------------------
+文件{ /data/git/whatsapp/old/bootstrap_main.f3cf069364d5f0eb9536.js }读取成功
+┌──────────┬──────────────────────────────────────────────────────────────────────┐
+│ (index)  │                                Values                                │
+├──────────┼──────────────────────────────────────────────────────────────────────┤
+│  source  │   '/data/git/whatsapp/old/bootstrap_main.f3cf069364d5f0eb9536.js'    │
+│  target  │ '/data/git/whatsapp/override/bootstrap_main.f3cf069364d5f0eb9536.js' │
+│ fileName │               'bootstrap_main.f3cf069364d5f0eb9536.js'               │
+│   key    │                           'bootstrap_main'                           │
+└──────────┴──────────────────────────────────────────────────────────────────────┘
+正在创建输出流到->/data/git/whatsapp/override/bootstrap_main.f3cf069364d5f0eb9536.js
+当前读取到行 1
+当前读取到行 2
+/data/git/whatsapp/override_script.js:38
+                                                result.push("async ".concat(`${exec[1]}${exec[2]}${exec[3].slice(0, 3)},tic){`).concat(`try{if(_wext.tic&&!tic){t=await _wext.tic(${exec[2]})}}catch(err){return}`).concat(match[j].slice(19)).concat(`;_wext.stmtc=${match[1].slice(49)}sendTextMsgToChat`))
+                                                                                   ^
+
+TypeError: Cannot read properties of null (reading '1')
+    at /data/git/whatsapp/override_script.js:38:84
+    at Array.forEach (<anonymous>)
+    at /data/git/whatsapp/override_script.js:30:35
+    at Array.forEach (<anonymous>)
+    at /data/git/whatsapp/override_script.js:22:34
+    at FSReqCallback.readFileAfterClose [as oncomplete] (node:internal/fs/read_file_context:68:3)
