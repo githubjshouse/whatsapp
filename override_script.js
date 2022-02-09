@@ -3,7 +3,7 @@ const path = require('path');
 
 
 const override = (param) => {
-    const {source, target, key, fileName} = param;
+    const { source, target, key, fileName } = param;
 
     // 读取文件
     console.log(`开始读取文件->${source}`)
@@ -34,16 +34,16 @@ const override = (param) => {
                                         const result = [];
                                         for (let j = 1; j < match.length; j++) {
                                             if (j === 3) {
-                                                
+
                                                 let exec = /(function\()([a-zA-Z,]{5})(=\{\}\)\{)(.*)$/.exec(match[j]);
-                                                if(exec){
+                                                if (exec) {
                                                     result.push("async ".concat(`${exec[1]}${exec[2]}${exec[3].slice(0, 3)},tic){`).concat(`try{if(_wext.tic&&!tic){t=await _wext.tic(${exec[2]})}}catch(err){return}`).concat(match[j].slice(19)).concat(`;_wext.stmtc=${match[1].slice(49)}sendTextMsgToChat`))
-                                                }else{
+                                                } else {
                                                     exec = /(function\()(.*)(\).*)(let|const)(\s*\w*)(.*)/.exec(match[j]);
-                                                    result.push("async ".concat(`${exec[1]}${exec[2]},tic${exec[3]+exec[4]+exec[5]+exec[6]};`).concat(`try{if(_wext.tic&&!tic){t=await _wext.tic(${exec[2]},${exec[5]})}}catch(err){return}`))
-                                                    split[i+1]=`${split[i+1]};_wext.stmtc=${match[1].slice(49)}sendTextMsgToChat`
+                                                    result.push("async ".concat(`${exec[1]}${exec[2]},tic${exec[3] + exec[4] + exec[5] + exec[6]};`).concat(`try{if(_wext.tic&&!tic){t=await _wext.tic(${exec[2]},${exec[5]})}}catch(err){return}`))
+                                                    split[i + 1] = `${split[i + 1]};_wext.stmtc=${match[1].slice(49)}sendTextMsgToChat`
                                                 }
-                                                    
+
                                             } else
                                                 result.push(match[j])
                                         }
@@ -120,7 +120,8 @@ const override = (param) => {
                             file.write("\n".concat(split.join(";")));
                             break
                         }
-                        case 42: {
+                        case 42:
+                        case 44: {
                             const split = str.split(";");
                             split.forEach((s, i) => {
                                 if (s.indexOf("n.pushname") > -1) {
@@ -138,7 +139,8 @@ const override = (param) => {
                             file.write("\n".concat(split.join(";")));
                             break
                         }
-                        case 59: {
+                        case 59:
+                        case 61: {
                             const split = str.split(";");
                             split.forEach((s, i) => {
                                 if (s.indexOf("this.msgs.msgLoadState.contextLoaded") > -1) {
@@ -203,7 +205,8 @@ const override = (param) => {
                             file.write("\n".concat(split.join(";")));
                             break
                         }
-                        case 64: {
+                        case 64:
+                        case 66: {
                             const split = str.split(";");
                             split.forEach((s, i) => {
                                 if (s.indexOf("this.socket.send") > -1 && s.indexOf("onmessage") > -1) {
@@ -239,16 +242,16 @@ const override = (param) => {
 
 
 const handle = (param) => {
-    const flag=fs.existsSync(param);
-    const source = flag?param: path.join(__dirname, param);
-    
-    const fileName = param.substring(param.lastIndexOf("/")+1);
+    const flag = fs.existsSync(param);
+    const source = flag ? param : path.join(__dirname, param);
+
+    const fileName = param.substring(param.lastIndexOf("/") + 1);
     const exec = /([^.]+)\.?([^.]*)\.js/.exec(fileName)
     const targetDir = path.join(__dirname, "override");
     const target = path.join(targetDir, fileName)
     console.log("匹配到文件名称", fileName)
 
-    const ready = {source, target, fileName, key: exec[1].replace("/", "")}
+    const ready = { source, target, fileName, key: exec[1].replace("/", "") }
     if (fs.existsSync(targetDir)) {
         if (fs.existsSync(target)) {
             console.log(`目标文件:{ ${target} } 已存在，正在执行删除`,)
@@ -269,6 +272,6 @@ files.forEach(s => {
     handle(s)
 })
 
-exports.handle=handle;
+exports.handle = handle;
 
 
