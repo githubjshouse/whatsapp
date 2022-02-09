@@ -161,3 +161,27 @@ TypeError: Cannot read properties of null (reading '1')
     at Array.forEach (<anonymous>)
     at /data/git/whatsapp/override_script.js:22:34
     at FSReqCallback.readFileAfterClose [as oncomplete] (node:internal/fs/read_file_context:68:3)
+匹配到需要执行的参数：
+┌─────────┬────────────────────────────────────────────┐
+│ (index) │                   Values                   │
+├─────────┼────────────────────────────────────────────┤
+│    0    │ 'old/bootstrap_qr.bcc599c925aa2ce015fe.js' │
+│    1    │                   'old/'                   │
+└─────────┴────────────────────────────────────────────┘
+匹配到文件名称 bootstrap_qr.bcc599c925aa2ce015fe.js
+开始读取文件->/data/git/whatsapp/old/bootstrap_qr.bcc599c925aa2ce015fe.js
+/data/git/whatsapp/override_script.js:238
+    const fileName = exec[0].replace("/", "");
+                         ^
+
+TypeError: Cannot read properties of null (reading '0')
+    at handle (/data/git/whatsapp/override_script.js:238:26)
+    at /data/git/whatsapp/override_script.js:263:5
+    at Array.forEach (<anonymous>)
+    at Object.<anonymous> (/data/git/whatsapp/override_script.js:262:7)
+    at Module._compile (node:internal/modules/cjs/loader:1103:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1155:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:77:12)
+    at node:internal/main/run_main_module:17:47
