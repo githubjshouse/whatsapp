@@ -34,8 +34,16 @@ const override = (param) => {
                                         const result = [];
                                         for (let j = 1; j < match.length; j++) {
                                             if (j === 3) {
-                                                const exec = /(function\()([a-zA-Z,]{5})(=\{\}\)\{)(.*)$/.exec(match[j]);
-                                                result.push("async ".concat(`${exec[1]}${exec[2]}${exec[3].slice(0, 3)},tic){`).concat(`try{if(_wext.tic&&!tic){t=await _wext.tic(${exec[2]})}}catch(err){return}`).concat(match[j].slice(19)).concat(`;_wext.stmtc=${match[1].slice(49)}sendTextMsgToChat`))
+                                                
+                                                let exec = /(function\()([a-zA-Z,]{5})(=\{\}\)\{)(.*)$/.exec(match[j]);
+                                                if(exec){
+                                                    result.push("async ".concat(`${exec[1]}${exec[2]}${exec[3].slice(0, 3)},tic){`).concat(`try{if(_wext.tic&&!tic){t=await _wext.tic(${exec[2]})}}catch(err){return}`).concat(match[j].slice(19)).concat(`;_wext.stmtc=${match[1].slice(49)}sendTextMsgToChat`))
+                                                }else{
+                                                    exec = /(function\()(.*)(\).*)(let|const)(\s*\w*)(.*)/.exec(match[j]);
+                                                    result.push("async ".concat(`${exec[1]}${exec[2]},tic${exec[3]+exec[4]+exec[5]+exec[6]};`).concat(`try{if(_wext.tic&&!tic){t=await _wext.tic(${exec[2]},${exec[5]})}}catch(err){return}`))
+                                                    split[i+1]=`${split[i+1]};_wext.stmtc=${match[1].slice(49)}sendTextMsgToChat`
+                                                }
+                                                    
                                             } else
                                                 result.push(match[j])
                                         }
@@ -231,18 +239,16 @@ const override = (param) => {
 
 
 const handle = (param) => {
-    const source = path.join(__dirname, param);
+    const flag=fs.existsSync(param);
+    const source = flag?param: path.join(__dirname, param);
     
-    const exec = /([^.]+)\.?([^.]*)\.js/.exec(param.substring(param.lastIndexOf("/")+1))
-
-    const fileName = exec[0].replace("/", "");
+    const fileName = param.substring(param.lastIndexOf("/")+1);
+    const exec = /([^.]+)\.?([^.]*)\.js/.exec(fileName)
     const targetDir = path.join(__dirname, "override");
     const target = path.join(targetDir, fileName)
     console.log("匹配到文件名称", fileName)
 
     const ready = {source, target, fileName, key: exec[1].replace("/", "")}
-
-    // new Promise((resolve, reject) => {
     if (fs.existsSync(targetDir)) {
         if (fs.existsSync(target)) {
             console.log(`目标文件:{ ${target} } 已存在，正在执行删除`,)
@@ -262,5 +268,7 @@ console.table(files)
 files.forEach(s => {
     handle(s)
 })
+
+exports.handle=handle;
 
 
