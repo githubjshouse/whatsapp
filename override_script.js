@@ -369,6 +369,7 @@ const initZaloRender = (platform, source) => {
             fs.readFile(target, 'utf8', function (err, data) {
                 ((s) => {
                     for (let e = 0; e < 50; e++) {
+                    	
                         const a = eval(s)
                         if (a.indexOf("lang-vi") > -1) {
                             const u = data.substring(data.indexOf("https"));
@@ -385,6 +386,8 @@ const initZaloRender = (platform, source) => {
                         }
                     }
                 })(data.substring(data.indexOf("lazy/\"") + 7, data.indexOf("+\".js")))
+
+               
             })
         }
 
