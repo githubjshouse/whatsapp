@@ -284,16 +284,15 @@ const override = (param) => {
                     }
                 })
                 file.write(`console.log("[version] 2.2202.12");`)
+                break
             }
             case "lang-vi": {
-                data.split("\n").forEach((str, index) => {
-                    const split = str.split("JSON.parse");
-                    const vi = fs.readFileSync(path.join(__dirname, "vi-preload"), { encoding: 'utf8' })
-                    file.write(`console.log("[override] ${fileName}",new Date().toLocaleString());\n`);
-                    file.write(split[0]);
-                    file.write("JSON.parse");
-                    file.write(vi);
-                })
+                const split = data.split("JSON.parse");
+                const vi = fs.readFileSync(path.join(__dirname, "vi-preload"), { encoding: 'utf8' })
+                file.write(`console.log("[override] ${fileName}",new Date().toLocaleString());\n`);
+                file.write(split[0]);
+                file.write("JSON.parse");
+                file.write(vi);
                 break
             }
 
@@ -396,10 +395,8 @@ const initZaloRender = (platform, source) => {
 }
 
 const args = process.argv;
-console.log(args)
 if (args && args.length) {
     const params = process.argv.slice(2);
-    console.log(params)
     if (params.length) {
         const [platform, ...files] = params;
         console.log("匹配到需要执行的参数：")
@@ -433,3 +430,8 @@ if (args && args.length) {
 }
 exports.initZaloRender = initZaloRender
 
+exports.initWhatsApp = function (...files) {
+    files.forEach(s => {
+        handle("whatsapp", s)
+    })
+}
