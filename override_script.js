@@ -296,6 +296,8 @@ const override = (param) => {
                 break
             }
 
+		default:
+		file.write(data)
         }
         file.end()
         console.log("[override] ", `{ ${target} } override success`, new Date().toLocaleString())
@@ -399,6 +401,7 @@ if (args && args.length) {
     const params = process.argv.slice(2);
     if (params.length) {
         const [platform, ...files] = params;
+        if (!files || !files.length) return;
         console.log("匹配到需要执行的参数：")
         console.table(files)
         const o = platform.split("-");
@@ -410,17 +413,13 @@ if (args && args.length) {
                 break
             }
             case "zalo": {
-                switch (o[1]) {
-                    case "render": {
-                        if (!files || !files.length) return;
-                        initZaloRender(o[0], files[0])
-                        break
-                    }
-                    default:
-                        files.forEach(s => {
+				files.forEach(s => {
+					if(getFileName(s).startsWith("render"))
+						initZaloRender(o[0], s)
+					else
                             handle(o[0], s)
                         })
-                }
+
                 break
             }
             default:
