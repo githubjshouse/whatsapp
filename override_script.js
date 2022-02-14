@@ -5,19 +5,19 @@ const cmd = require('child_process');
 /**
  * 操作当前文件夹的git  push
  */
-const gitPush = () => {
+const gitPush = (fileName) => {
     var c1 = 'git add --all', c2 = `git commit -m "update:js更新 ${new Date().toLocaleString()}"`, c3 = 'git push'
     cmd.exec(c1, function (error, stdout, stderr) {
-       console.log(c1,":");
+       console.log(c1,":",fileName);
             	console.table({ error, stderr, stdout })
         if (!error && !stderr)
             cmd.exec(c2, function (error, stdout, stderr) {
-            	console.log(c2,":");
+            	console.log(c2,":",fileName);
             	console.table({ error, stderr, stdout })
                 if (!error && !stderr)
                     cmd.exec(c3, function (error, stdout, stderr) {
-                        console.log(c3,":");
-            	console.table({ error, stderr, stdout })
+                        console.log(c3,":",fileName);
+            			console.table({ error, stderr, stdout })
                     })
                 
             })
@@ -304,7 +304,7 @@ const override = (param) => {
         }
         file.end()
         console.log("[override] ", `{ ${target} } override success`, new Date().toLocaleString())
-        gitPush()
+        gitPush(fileName)
 
     });
 }
