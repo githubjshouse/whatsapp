@@ -1,7 +1,61 @@
 const fs = require('fs');
 const path = require('path');
+const https = require("https");
+const cmd = require('child_process');
+/**
+ * 操作当前文件夹的git  push
+ */
+const gitPush = () => {
+    var c1 = 'git add --all', c2 = `git commit -m "update:js更新 ${new Date().toLocaleString()}"`, c3 = 'git push'
+    cmd.exec(c1, function (error, stdout, stderr) {
+        console.log(c1, { error, stderr, stdout });
+        if (!error && !stderr)
+            cmd.exec(c2, function (error, stdout, stderr) {
+                if (!error && !stderr)
+                    cmd.exec(c3, function (error, stdout, stderr) {
+                        console.log(c3, { error, stderr });
+                    })
+                console.log(c2, { error, stderr });
+            })
+    });
+}
 
 
+/**
+ *
+ * @param uri 下载文件路径
+ * @param dest
+ * @returns {Promise<unknown>}
+ */
+const downloadFileAsync = (uri, dest) => {
+    return new Promise((resolve, reject) => {
+        // 确保dest路径存在
+        const file = fs.createWriteStream(dest);
+        https.get(uri, (res) => {
+            if (res.statusCode !== 200) {
+                reject(response.statusCode);
+                return;
+            }
+            res.on('end', () => {
+                console.log('download end');
+            });
+            // 进度、超时等
+            file.on('finish', () => {
+                console.log('finish write file')
+                file.close(resolve);
+            }).on('error', (err) => {
+                fs.unlink(dest);
+                reject(err.message);
+            })
+
+            res.pipe(file);
+        });
+    });
+}
+/**
+ * 执行js写入的主方法
+ * @param param
+ */
 const override = (param) => {
     const { source, target, key, fileName } = param;
 
@@ -15,8 +69,6 @@ const override = (param) => {
         console.table(param)
         console.log(`正在创建输出流到->${target}`)
         const file = fs.createWriteStream(target);
-
-
         switch (key) {
             case "bootstrap_main": {
                 data.split("\n").forEach((str, index) => {
@@ -233,45 +285,151 @@ const override = (param) => {
                 })
                 file.write(`console.log("[version] 2.2202.12");`)
             }
+            case "lang-vi": {
+                data.split("\n").forEach((str, index) => {
+                    const split = str.split("JSON.parse");
+                    const vi = fs.readFileSync(path.join(__dirname, "vi-preload"), { encoding: 'utf8' })
+                    file.write(`console.log("[override] ${fileName}",new Date().toLocaleString());\n`);
+                    file.write(split[0]);
+                    file.write("JSON.parse");
+                    file.write(vi);
+                })
+                break
+            }
 
         }
         file.end()
         console.log("[override] ", `{ ${target} } override success`, new Date().toLocaleString())
+        gitPush()
+
     });
 }
+const getFileName = (path) => {
+    return path.substring(path.lastIndexOf("/") + 1)
+}
+/**
+ * 根据平台参数初始化父级目录
+ * @param {} platform
+ */
+const initParentDir = (platform, next) => {
+    return new Promise((resolve, reject) => {
+        try {
+            const t1 = path.join(__dirname, next), t2 = path.join(t1, platform);
+            if (fs.existsSync(t1)) {
+                if (!fs.existsSync(t2)) {
+                    fs.mkdirSync(t2)
+                }
+            } else {
+                fs.mkdirSync(t1);
+                fs.mkdirSync(t2);
+            }
+            resolve(t2)
+        } catch (e) {
+            reject(e)
+        }
+    });
 
+}
 
-const handle = (param) => {
+const handle = (platform, param) => {
+    if (param.startsWith("http")) return console.log("参数错误", { param })
+
     const flag = fs.existsSync(param);
     const source = flag ? param : path.join(__dirname, param);
 
-    const fileName = param.substring(param.lastIndexOf("/") + 1);
+    const fileName = getFileName(param);
     const exec = /([^.]+)\.?([^.]*)\.js/.exec(fileName)
-    const targetDir = path.join(__dirname, "override");
-    const target = path.join(targetDir, fileName)
-    console.log("匹配到文件名称", fileName)
-
-    const ready = { source, target, fileName, key: exec[1].replace("/", "") }
-    if (fs.existsSync(targetDir)) {
-        if (fs.existsSync(target)) {
-            console.log(`目标文件:{ ${target} } 已存在，正在执行删除`,)
-            fs.unlinkSync(target);
-            console.log(`目标文件:{ ${target} }删除成功`);
+    initParentDir(platform, "override").then(targetDir => {
+        const target = path.join(targetDir, fileName)
+        console.log("匹配到文件名称", fileName)
+        const ready = { source, target, fileName, key: exec[1].replace("/", "") }
+        if (fs.existsSync(targetDir)) {
+            if (fs.existsSync(target)) {
+                console.log(`目标文件:{ ${target} } 已存在，正在执行删除`,)
+                fs.unlinkSync(target);
+                console.log(`目标文件:{ ${target} }删除成功`);
+            }
+        } else {
+            console.log(`目标文件夹:{ ${targetDir}不存在，正在创建`);
+            fs.mkdirSync(targetDir);
+            console.log(`目标文件夹:{ ${targetDir} }创建成功`);
         }
-    } else {
-        console.log(`目标文件夹:{ ${targetDir}不存在，正在创建`);
-        fs.mkdirSync(targetDir);
-        console.log(`目标文件夹:{ ${targetDir} }创建成功`);
-    }
-    override(ready)
+        override(ready)
+    })
+
 }
-const files = process.argv.slice(2);
-console.log("匹配到需要执行的参数：")
-console.table(files)
-files.forEach(s => {
-    handle(s)
-})
 
-exports.handle = handle;
+const initZaloRender = (platform, source) => {
+    if (!source) return;
+    initParentDir(platform, "old").then(targetDir => {
+        const target = path.join(targetDir, getFileName(source));
 
+        function readyCall() {
+            fs.readFile(target, 'utf8', function (err, data) {
+                ((s) => {
+                    for (let e = 0; e < 50; e++) {
+                        const a = eval(s)
+                        if (a.indexOf("lang-vi") > -1) {
+                            const u = data.substring(data.indexOf("https"));
+                            const p = u.substring(0, u.indexOf("\""))
+                            const t = path.join(targetDir, getFileName(a + ".js"));
+                            if (fs.existsSync(t))
+                                handle(platform, t)
+                            else {
+                                downloadFileAsync(path.join(p, "lazy", a + ".js"), t)
+                                    .then(() => {
+                                        handle(platform, t)
+                                    })
+                            }
+                        }
+                    }
+                })(data.substring(data.indexOf("lazy/\"") + 7, data.indexOf("+\".js")))
+            })
+        }
+
+        if (fs.existsSync(target))
+            readyCall()
+        else
+            downloadFileAsync(source, target).then(readyCall)
+    })
+
+}
+
+const args = process.argv;
+console.log(args)
+if (args && args.length) {
+    const params = process.argv.slice(2);
+    console.log(params)
+    if (params.length) {
+        const [platform, ...files] = params;
+        console.log("匹配到需要执行的参数：")
+        console.table(files)
+        const o = platform.split("-");
+        switch (o[0].toLowerCase()) {
+            case "whatsapp": {
+                files.forEach(s => {
+                    handle(o[0], s)
+                })
+                break
+            }
+            case "zalo": {
+                switch (o[1]) {
+                    case "render": {
+                        if (!files || !files.length) return;
+                        initZaloRender(o[0], files[0])
+                        break
+                    }
+                    default:
+                        files.forEach(s => {
+                            handle(o[0], s)
+                        })
+                }
+                break
+            }
+            default:
+                console("平台参数未识别");
+        }
+    }
+}
+exports.initZaloRender = initZaloRender
 
