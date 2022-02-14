@@ -8,14 +8,18 @@ const cmd = require('child_process');
 const gitPush = () => {
     var c1 = 'git add --all', c2 = `git commit -m "update:js更新 ${new Date().toLocaleString()}"`, c3 = 'git push'
     cmd.exec(c1, function (error, stdout, stderr) {
-        console.log(c1, { error, stderr, stdout });
+       console.log(c1,":");
+            	console.table({ error, stderr, stdout })
         if (!error && !stderr)
             cmd.exec(c2, function (error, stdout, stderr) {
+            	console.log(c2,":");
+            	console.table({ error, stderr, stdout })
                 if (!error && !stderr)
                     cmd.exec(c3, function (error, stdout, stderr) {
-                        console.log(c3, { error, stderr });
+                        console.log(c3,":");
+            	console.table({ error, stderr, stdout })
                     })
-                console.log(c2, { error, stderr });
+                
             })
     });
 }
