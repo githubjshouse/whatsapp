@@ -322,7 +322,7 @@ const override = (param) => {
                     if (index == 0) {
                         file.write(`console.log("[override] ${fileName}",new Date().toLocaleString());`);
                     }
-                    str = str.replace("Tiáº¿ng Viá»‡t", "中文(简体)")
+                    str = str.replaceAll("Tiếng Việt", "中文(简体)")
                     if (str.indexOf("vn:") > -1) {
                         const split = str.split("vn:")
                         file.write(`\n${split[0]}`)
