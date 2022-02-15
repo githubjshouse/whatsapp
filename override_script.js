@@ -1,27 +1,46 @@
 const fs = require('fs');
 const path = require('path');
 const https = require("https");
-const cmd = require('child_process');
+const { exec } = require('child_process');
+
 /**
- * 操作当前文件夹的git  push
+ * 执行cmd命令
+ * @param cmd
+ * @returns {Promise<unknown>}
+ */
+function execCommand(cmd) {
+    return new Promise((resolve, reject) => {
+        const result = exec(cmd);
+        result.stdout.on('data', resolve);
+        result.stderr.on('data', reject);
+        result.on('close', (code) => {
+            console.log("命令进程结束", { code, cmd });
+        });
+    })
+}
+
+process.on('exit', (code) => {
+    console.log('node进程结束: ', { code });
+});
+/**
+ * 执行当前git仓库的提交
+ * @param fileName
  */
 const gitPush = (fileName) => {
-    var c1 = 'git add --all', c2 = `git commit -m "update:js更新 ${new Date().toLocaleString()}"`, c3 = 'git push'
-    cmd.exec(c1, function (error, stdout, stderr) {
-       console.log(c1,":",fileName);
-            	console.table({ error, stderr, stdout })
-        if (!error && !stderr)
-            cmd.exec(c2, function (error, stdout, stderr) {
-            	console.log(c2,":",fileName);
-            	console.table({ error, stderr, stdout })
-                if (!error && !stderr)
-                    cmd.exec(c3, function (error, stdout, stderr) {
-                        console.log(c3,":",fileName);
-            			console.table({ error, stderr, stdout })
-                    })
-                
-            })
-    });
+    execCommand('git rev-parse --is-inside-work-tree')
+        .then(res => {
+            if (res.trim() === "true") {
+                console.log("当前目录为git仓库，执行git提交并推送...")
+                execCommand(`git add --all && git commit -m 'update:js更新 ${new Date().toLocaleString()}"' && git push`).then(res => {
+                    console.log(res)
+                }).catch(console.error)
+            }
+        })
+        .catch(e => {
+            const code = parseInt(Math.random() * 50);
+            console.log(`当前目录非git仓库，正在以 ${code} 码结束进程`)
+            process.exit(code)
+        })
 }
 
 
@@ -29,7 +48,7 @@ const gitPush = (fileName) => {
  *
  * @param uri 下载文件路径
  * @param dest
- * @returns {Promise<unknown>}
+ * @returns {Promise<string>}
  */
 const downloadFileAsync = (uri, dest) => {
     return new Promise((resolve, reject) => {
@@ -62,13 +81,11 @@ const downloadFileAsync = (uri, dest) => {
  */
 const override = (param) => {
     const { source, target, key, fileName } = param;
-
+    console.log("\n\n\n-------------------------------------------------------------------------------------------------------------------------")
     // 读取文件
     console.log(`开始读取文件->${source}`)
     fs.readFile(source, 'utf8', function (err, data) {
         if (err) throw err;
-
-        console.log("\n\n\n-------------------------------------------------------------------------------------------------------------------------")
         console.log(`文件{ ${source} }读取成功`)
         console.table(param)
         console.log(`正在创建输出流到->${target}`)
@@ -299,9 +316,26 @@ const override = (param) => {
                 file.write(vi);
                 break
             }
-
-		default:
-		file.write(data)
+            case "zalo_main": {
+                data.split("\n").forEach((str, index) => {
+                    console.log("当前读取到行", index + 1)
+                    if (index == 0) {
+                        file.write(`console.log("[override] ${fileName}",new Date().toLocaleString());`);
+                    }
+                    str = str.replace("Tiáº¿ng Viá»‡t", "中文(简体)")
+                    if (str.indexOf("vn:") > -1) {
+                        const split = str.split("vn:")
+                        file.write(`\n${split[0]}`)
+                        file.write("vn:window._i18n_main||")
+                        file.write(`${split[1]}`)
+                    } else {
+                        file.write("\n" + str)
+                    }
+                })
+                break
+            }
+            default:
+                file.write(data)
         }
         file.end()
         console.log("[override] ", `{ ${target} } override success`, new Date().toLocaleString())
@@ -344,10 +378,15 @@ const handle = (platform, param) => {
 
     const fileName = getFileName(param);
     const exec = /([^.]+)\.?([^.]*)\.js/.exec(fileName)
+
     initParentDir(platform, "override").then(targetDir => {
         const target = path.join(targetDir, fileName)
         console.log("匹配到文件名称", fileName)
-        const ready = { source, target, fileName, key: exec[1].replace("/", "") }
+
+        let key = exec[1].replace("/", "");
+        if (platform.toLowerCase() === "zalo" && fileName.startsWith("main-")) {
+            key = "zalo_main"
+        }
         if (fs.existsSync(targetDir)) {
             if (fs.existsSync(target)) {
                 console.log(`目标文件:{ ${target} } 已存在，正在执行删除`,)
@@ -359,7 +398,7 @@ const handle = (platform, param) => {
             fs.mkdirSync(targetDir);
             console.log(`目标文件夹:{ ${targetDir} }创建成功`);
         }
-        override(ready)
+        override({ source, target, fileName, key })
     })
 
 }
@@ -373,7 +412,7 @@ const initZaloRender = (platform, source) => {
             fs.readFile(target, 'utf8', function (err, data) {
                 ((s) => {
                     for (let e = 0; e < 50; e++) {
-                    	
+
                         const a = eval(s)
                         if (a.indexOf("lang-vi") > -1) {
                             const u = data.substring(data.indexOf("https"));
@@ -390,11 +429,8 @@ const initZaloRender = (platform, source) => {
                         }
                     }
                 })(data.substring(data.indexOf("lazy/\"") + 7, data.indexOf("+\".js")))
-
-               
             })
         }
-
         if (fs.existsSync(target))
             readyCall()
         else
@@ -420,13 +456,12 @@ if (args && args.length) {
                 break
             }
             case "zalo": {
-				files.forEach(s => {
-					if(getFileName(s).startsWith("render"))
-						initZaloRender(o[0], s)
-					else
-                            handle(o[0], s)
-                        })
-
+                files.forEach(s => {
+                    if (getFileName(s).startsWith("render"))
+                        initZaloRender(o[0], s)
+                    else
+                        handle(o[0], s)
+                })
                 break
             }
             default:
@@ -438,6 +473,6 @@ exports.initZaloRender = initZaloRender
 
 exports.initWhatsApp = function (...files) {
     files.forEach(s => {
-        handle("whatsapp", s)
+        handle("zalo", s)
     })
 }
