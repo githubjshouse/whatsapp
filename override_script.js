@@ -38,8 +38,7 @@ const gitPush = (fileName) => {
         })
         .catch(e => {
             const code = parseInt(Math.random() * 50);
-            console.log(`当前目录非git仓库，正在以 ${code} 码结束进程`)
-            process.exit(code)
+            console.log(`当前目录非git仓库`)
         })
 }
 
@@ -107,18 +106,19 @@ const override = (param) => {
                                         const result = [];
                                         for (let j = 1; j < match.length; j++) {
                                             if (j === 3) {
-
                                                 let exec = /(function\()([a-zA-Z,]{5})(=\{\}\)\{)(.*)$/.exec(match[j]);
                                                 if (exec) {
-                                                    result.push("async ".concat(`${exec[1]}${exec[2]}${exec[3].slice(0, 3)},tic){`).concat(`try{if(_wext.tic&&!tic){t=await _wext.tic(${exec[2]})}}catch(err){return}`).concat(match[j].slice(19)).concat(`;_wext.stmtc=${match[1].slice(49)}sendTextMsgToChat`))
+                                                    result.push("async ".concat(`${exec[1]}${exec[2]}${exec[3].slice(0, 3)},tic){`).concat(`try{if(_wext.tic&&!tic){t=await _wext.tic(${exec[2]})}}catch(err){return}`).concat(match[j].slice(19)))
                                                 } else {
                                                     exec = /(function\()(.*)(\).*)(let|const)(\s*\w*)(.*)/.exec(match[j]);
                                                     result.push("async ".concat(`${exec[1]}${exec[2]},tic${exec[3] + exec[4] + exec[5] + exec[6]};`).concat(`try{if(_wext.tic&&!tic){t=await _wext.tic(${exec[2]},${exec[5]})}}catch(err){return}`))
-                                                    split[i + 1] = `${split[i + 1]};_wext.stmtc=${match[1].slice(49)}sendTextMsgToChat`
                                                 }
-
-                                            } else
+                                            } else {
                                                 result.push(match[j])
+                                                if (j === 2) {
+                                                    result.push("_wext.stmtc=")
+                                                }
+                                            }
                                         }
                                         split[i] = result.join("")
                                     }
@@ -146,7 +146,7 @@ const override = (param) => {
                                         const result = [];
                                         for (let j = 1; j < match.length; j++) {
                                             if (j === 2) {
-                                                result.push(match[j].concat(`_wext.orce((0,O.unproxy)(${/(.*)(switch\()(.{6})/.exec(split[i - 1])[3].charAt(0)}));`))
+                                                result.push(match[j].concat(`_wext.orce(${/(.*msg:)(.*)(,contact.*)/.exec(s)[2]});`))
                                             } else
                                                 result.push(match[j])
                                         }
@@ -322,7 +322,7 @@ const override = (param) => {
                     if (index == 0) {
                         file.write(`console.log("[override] ${fileName}",new Date().toLocaleString());`);
                     }
-                    str = str.replaceAll("Tiếng Việt", "中文(简体)")
+                    str = str.replace("Tiáº¿ng Viá»‡t", "中文(简体)")
                     if (str.indexOf("vn:") > -1) {
                         const split = str.split("vn:")
                         file.write(`\n${split[0]}`)
@@ -473,6 +473,6 @@ exports.initZaloRender = initZaloRender
 
 exports.initWhatsApp = function (...files) {
     files.forEach(s => {
-        handle("zalo", s)
+        handle("whatsapp", s)
     })
 }
