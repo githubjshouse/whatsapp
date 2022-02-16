@@ -106,12 +106,20 @@ const override = (param) => {
                                         const result = [];
                                         for (let j = 1; j < match.length; j++) {
                                             if (j === 3) {
-                                                let exec = /(function\()([a-zA-Z,]{5})(=\{\}\)\{)(.*)$/.exec(match[j]);
-                                                if (exec) {
-                                                    result.push("async ".concat(`${exec[1]}${exec[2]}${exec[3].slice(0, 3)},tic){`).concat(`try{if(_wext.tic&&!tic){t=await _wext.tic(${exec[2]})}}catch(err){return}`).concat(match[j].slice(19)))
+                                                const param = match[j].substring(match[j].indexOf("(") + 1, match[j].indexOf(")"))
+                                                if (param.indexOf("=") > -1) {
+                                                    const insert = `let tic=arguments.length>3&&void 0!==arguments[3]?arguments[3]:null;try{if(_wext.tic&&!tic){t=await _wext.tic(${param.substring(0,param.indexOf("="))})}}catch(err){return}`
+                                                    const sp = match[j].split("return");
+                                                    if (sp.length === 3) {
+                                                        sp[0]=`async ${sp[0]}`;
+                                                        sp[1]=`${insert}return${sp[1]}`
+                                                        sp[2]=`return${sp[2]}`
+                                                    }
+                                                    result.push(sp.join(""))
                                                 } else {
-                                                    exec = /(function\()(.*)(\).*)(let|const)(\s*\w*)(.*)/.exec(match[j]);
-                                                    result.push("async ".concat(`${exec[1]}${exec[2]},tic${exec[3] + exec[4] + exec[5] + exec[6]};`).concat(`try{if(_wext.tic&&!tic){t=await _wext.tic(${exec[2]},${exec[5]})}}catch(err){return}`))
+                                                    const exec = /(.*let|const)(\s*\w*)(.*)/.exec(match[j]);
+                                                    const insert = `;let tic=arguments.length>3&&void 0!==arguments[3]?arguments[3]:null;try{if(_wext.tic&&!tic){t=await _wext.tic(${param},${exec[2].trim()})}}catch(err){return}`
+                                                    result.push("async ".concat(match[j]).concat(insert))
                                                 }
                                             } else {
                                                 result.push(match[j])
