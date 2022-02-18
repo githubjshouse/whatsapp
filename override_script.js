@@ -431,6 +431,20 @@ const override = (param) => {
                         } else {
                             file.write(str + ";")
                         }
+                    } else if (str.hasAll("STR_SIGNIN_REQUEST_LOGIN_TOOLTIP:", "STR_LOGGING_IN:", "STR_LOGIN_ACCOUNT:")) {
+                        const match = /(.*)(const|let|var)(.*=)(.*)/.exec(str)
+                        if (match && match.length>4){
+                            const result=[]
+                            for (let j = 1; j < match.length; j++) {
+                                if (j === 4) {
+                                    result.push("window.i18n||")
+                                }
+                                result.push(match[j])
+                            }
+                            file.write(result.join("") + ";")
+                        }else {
+                            file.write(str + ";")
+                        }
                     } else {
                         file.write(str + ";")
                     }
