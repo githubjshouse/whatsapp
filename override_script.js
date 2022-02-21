@@ -160,6 +160,14 @@ const override = (param) => {
                                         }
                                         split[i] = result.join("")
                                     }
+                                } else if (s.hasAll(".ReactionsCollection", ".StickerPackCollectionMd")) {
+                                    const next = split[i + 1].split("}")
+                                    if (next.length == 2) {
+                                        const ns = next[0].split("=")
+                                        if (ns.length === 2) {
+                                            split[i + 1] = `${next[0]};window._whatsapp=${ns[1]};if(!${ns[1]}.Chat.active){${ns[1]}.Chat.active=${ns[1]}.Chat.getActive}}${next[1]}`
+                                        }
+                                    }
                                 }
                             })
                             file.write("\n".concat(split.join(";")));
@@ -433,8 +441,8 @@ const override = (param) => {
                         }
                     } else if (str.hasAll("STR_SIGNIN_REQUEST_LOGIN_TOOLTIP:", "STR_LOGGING_IN:", "STR_LOGIN_ACCOUNT:")) {
                         const match = /(.*)(const|let|var)(.*=)(.*)/.exec(str)
-                        if (match && match.length>4){
-                            const result=[]
+                        if (match && match.length > 4) {
+                            const result = []
                             for (let j = 1; j < match.length; j++) {
                                 if (j === 4) {
                                     result.push("window.i18n||")
@@ -442,7 +450,7 @@ const override = (param) => {
                                 result.push(match[j])
                             }
                             file.write(result.join("") + ";")
-                        }else {
+                        } else {
                             file.write(str + ";")
                         }
                     } else {
@@ -604,6 +612,10 @@ exports.initZaloRender = initZaloRender
 
 exports.initWhatsApp = function (...files) {
     files.forEach(s => {
-        handle("zalo", s)
+        handle("whatsapp", s)
     })
 }
+
+
+
+
