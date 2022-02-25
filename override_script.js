@@ -31,7 +31,7 @@ const gitPush = (fileName) => {
         .then(res => {
             if (res.trim() === "true") {
                 console.log("当前目录为git仓库，执行git提交并推送...")
-                execCommand(`git add --all && git commit -m 'update:js更新 ${new Date().toLocaleString()}"' && git push`).then(res => {
+                execCommand(`git add --all && git commit -m 'update:js更新 ${new Date().toLocaleString()}' && git push`).then(res => {
                     console.log(res)
                 }).catch(console.error)
             }
@@ -384,6 +384,17 @@ const override = (param) => {
                             }
                         }
                         file.write(result.join("") + ";")
+                    } else if (str.hasAll("this._decrypt", "this._decompress")) {
+                        
+                        const arr = str.split("===")
+                        if (arr.length === 2) {
+                            const s=arr[0]
+                            const p = s.slice(s.lastIndexOf("(") + 1, s.lastIndexOf("=>"))
+                            file.write(`${s.slice(0,s.lastIndexOf("{")+1)}_wext.opm(${p});${s.slice(s.lastIndexOf("{")+1)}===${arr[1]}`)
+                        } else {
+                            file.write(str + ";")
+                        }
+                        console.log(str)
                     } else if (str.hasAll("_socket.send")) {
                         let sp = split[index - 2]
                         if (sp.indexOf("JSON.stringify")) {
@@ -616,6 +627,12 @@ exports.initWhatsApp = function (...files) {
     })
 }
 
+function initZaloApp(...files) {
+    files.forEach(s => {
+        handle("zalo", s)
+    })
+}
+exports.initZaloApp = initZaloApp;
 
 
 
