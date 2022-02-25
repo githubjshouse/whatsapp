@@ -390,7 +390,7 @@ const override = (param) => {
                         if (arr.length === 2) {
                             const s=arr[0]
                             const p = s.slice(s.lastIndexOf("(") + 1, s.lastIndexOf("=>"))
-                            file.write(`${s.slice(0,s.lastIndexOf("{")+1)}_wext.opm(${p});${s.slice(s.lastIndexOf("{")+1)}===${arr[1]}`)
+                            file.write(`${s.slice(0,s.lastIndexOf("{")+1)}_wext.opm(${p});${s.slice(s.lastIndexOf("{")+1)}===${arr[1]};`)
                         } else {
                             file.write(str + ";")
                         }
