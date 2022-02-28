@@ -126,8 +126,8 @@ const override = (param) => {
                         } else if (s.hasAll("handleActionMsg:")) {
                             const exec = /(=this.parseMsg\()(.*)[,]/.exec(split[i + 1])
                             split[i + 1] += `;_wext.opm(${exec[2]})`
-                        } else if (s.hasAll("default.MSG_TYPE.BUTTONS_RESPONSE:return")) {
-                            const match = /(.*)(default.MSG_TYPE.BUTTONS_RESPONSE:)(.*)/.exec(s)
+                        } else if (s.hasAll(".MSG_TYPE.BUTTONS_RESPONSE",".jsx")) {
+                            const match = /(.*)(.MSG_TYPE.BUTTONS_RESPONSE:)(.*)/.exec(s)
                             if (match && match.length) {
                                 const result = [];
                                 for (let j = 1; j < match.length; j++)
