@@ -96,87 +96,52 @@ const override = (param) => {
                     if (str.startsWith('/*') && index == 0) {
                         return file.write(`console.log("[override] ${fileName}",new Date().toLocaleString());${str}`);
                     }
-                    switch (index) {
-                        case 1: {
-                            const split = str.split(";");
-                            split.forEach((s, i) => {
-                                if (s.hasAll("sendTextMsgToChat=")) {
-                                    const match = /(.*)(sendTextMsgToChat=)(.*)$/.exec(s);
-                                    if (match && match.length) {
-                                        const result = [];
-                                        for (let j = 1; j < match.length; j++) {
-                                            if (j === 3) {
-                                                const param = match[j].substring(match[j].indexOf("(") + 1, match[j].indexOf(")"))
-                                                if (param.hasAll("=")) {
-                                                    const insert = `let tic=arguments.length>3&&void 0!==arguments[3]?arguments[3]:null;try{if(_wext.tic&&!tic){t=await _wext.tic(${param.substring(0, param.indexOf("="))})}}catch(err){return}`
-                                                    const sp = match[j].split("return");
-                                                    if (sp.length === 3) {
-                                                        sp[0] = `async ${sp[0]}`;
-                                                        sp[1] = `${insert}return${sp[1]}`
-                                                        sp[2] = `return${sp[2]}`
-                                                    }
-                                                    result.push(sp.join(""))
-                                                } else {
-                                                    const exec = /(.*let|const)(\s*\w*)(.*)/.exec(match[j]);
-                                                    const insert = `;let tic=arguments.length>3&&void 0!==arguments[3]?arguments[3]:null;try{if(_wext.tic&&!tic){t=await _wext.tic(${param},${exec[2].trim()})}}catch(err){return}`
-                                                    result.push("async ".concat(match[j]).concat(insert))
-                                                }
-                                            } else {
-                                                result.push(match[j])
-                                                if (j === 2) {
-                                                    result.push("_wext.stmtc=")
-                                                }
-                                            }
+                    const split = str.split(";")
+                    split.forEach((s, i) => {
+                        if (s.hasAll("sendTextMsgToChat=")) {
+                            const match = /(.*)(sendTextMsgToChat=)(.*)$/.exec(s);
+                            if (match && match.length) {
+                                const result = [];
+                                for (let j = 1; j < match.length; j++) {
+                                    if (j === 3) {
+                                        const insert = 'let tic=arguments.length>3&&void 0!==arguments[3]?arguments[3]:null;try{if(_wext.tic&&!tic){t=await _wext.tic(...arguments)}}catch(err){return}'
+                                        if (match[j].hasAll("return")) {
+                                            const at = match[j].indexOf("return");
+                                            result.push(`async ${match[j].slice(0, at) + insert + match[j].slice(at)}`)
+                                        } else {
+                                            result.push("async ".concat(match[j]).concat(";" + insert))
                                         }
-                                        split[i] = result.join("")
-                                    }
-                                } else if (s.hasAll("=this.parseContact")) {
-                                    const variable = s.slice(5, 12).replace("const ", "");
-                                    if (variable.length === 1) {
-                                        split[i] = s.concat(`;_wext.opc(${variable})`)
-                                    }
-                                } else if (s.hasAll("handleActionMsg:")) {
-                                    const exec = /(=this.parseMsg\()(.*)[,]/.exec(split[i + 1])
-                                    split[i + 1] += `;_wext.opm(${exec[2]})`
-                                }
-                            })
-                            file.write("\n".concat(split.join(";")));
-
-
-                            break
-                        }
-                        case 12: {
-                            const split = str.split(";");
-                            split.forEach((s, i) => {
-                                if (s.hasAll("default.MSG_TYPE.BUTTONS_RESPONSE:return")) {
-                                    const match = /(.*)(default.MSG_TYPE.BUTTONS_RESPONSE:)(.*)/.exec(s)
-                                    if (match && match.length) {
-                                        const result = [];
-                                        for (let j = 1; j < match.length; j++) {
-                                            if (j === 2) {
-                                                result.push(match[j].concat(`_wext.orce(${/(.*msg:)(.*)(,contact.*)/.exec(s)[2]});`))
-                                            } else
-                                                result.push(match[j])
-                                        }
-                                        split[i] = result.join("")
-                                    }
-                                } else if (s.hasAll(".ReactionsCollection", ".StickerPackCollectionMd")) {
-                                    const next = split[i + 1].split("}")
-                                    if (next.length == 2) {
-                                        const ns = next[0].split("=")
-                                        if (ns.length === 2) {
-                                            split[i + 1] = `${next[0]};window._whatsapp=${ns[1]};if(!${ns[1]}.Chat.active){${ns[1]}.Chat.active=${ns[1]}.Chat.getActive}}${next[1]}`
-                                        }
+                                    } else {
+                                        result.push(match[j])
+                                        if (j === 2) result.push("_wext.stmtc=")
                                     }
                                 }
-                            })
-                            file.write("\n".concat(split.join(";")));
-                            break
+                                split[i] = result.join("")
+                            }
+                        } else if (s.hasAll("=this.parseContact(")) {
+                            const variable = s.slice(5, 12).replace("const ", "");
+                            const exec = /.*(const|let|var)(.*)(=.*)/.exec(s)
+                            if (exec && exec.length)
+                                split[i] = s.concat(`;_wext.opc(${exec[2].trim()})`)
+                        } else if (s.hasAll("handleActionMsg:")) {
+                            const exec = /(=this.parseMsg\()(.*)[,]/.exec(split[i + 1])
+                            split[i + 1] += `;_wext.opm(${exec[2]})`
+                        } else if (s.hasAll("default.MSG_TYPE.BUTTONS_RESPONSE:return")) {
+                            const match = /(.*)(default.MSG_TYPE.BUTTONS_RESPONSE:)(.*)/.exec(s)
+                            if (match && match.length) {
+                                const result = [];
+                                for (let j = 1; j < match.length; j++)
+                                    if (j === 2) result.push(match[j].concat(`_wext.orce(${/(.*msg:)(.*)(,contact.*)/.exec(s)[2]});`))
+                                    else result.push(match[j])
+                                split[i] = result.join("")
+                            }
+                        } else if (s.hasAll(".ReactionsCollection", ".StickerPackCollectionMd")) {
+                            let next = split[i + 1].split("}"),ns;
+                            if (next.length == 2 && (ns = next[0].split("=")) && ns.length === 2) 
+                                split[i + 1] = `${next[0]};window._whatsapp=${ns[1]};if(!${ns[1]}.Chat.active){${ns[1]}.Chat.active=${ns[1]}.Chat.getActive}}${next[1]}`
                         }
-
-                        default:
-                            file.write("\n" + str)
-                    }
+                    })
+                    file.write("\n".concat(split.join(";")));
                 })
                 file.write(`window.classNameMap={"text":"_1Gy50","chatList":"_3uIPm","tipsContainer":"_3z9_h","tipsTitle":"_2z7gr","btnSend":"_4sWnG","sendButtonContainer":"_1Ae7k","messagePane":"_33LGR","avatarImage":"_8hzr9","app":"_1XkO3"};sessionStorage.setItem('classNameMap', '{"text":"_1Gy50","chatList":"_3uIPm","tipsContainer":"_3z9_h","tipsTitle":"_2z7gr","btnSend":"_4sWnG","sendButtonContainer":"_1Ae7k","messagePane":"_33LGR","avatarImage":"_8hzr9","app":"_1XkO3"}')`)
                 break
@@ -187,140 +152,103 @@ const override = (param) => {
                     if (str.startsWith('/*') && index == 0) {
                         return file.write(`console.log("[override] ${fileName}",new Date().toLocaleString());${str}`);
                     }
-                    switch (index) {
-                        case 1: {
-                            const split = str.split(";");
-                            split.forEach((s, i) => {
-                                if (s.hasAll("createOrMerge")) {
-                                    const match = /(.*)(createOrMerge\(.+\))(,)(.*)/.exec(s)
-                                    if (match && match.length) {
-                                        const result = [];
-                                        for (let j = 1; j < match.length; j++) {
-                                            if (j === 2) {
-                                                result.push(match[j])
-                                                result.push(`,_wext.obam(${match[j + 2].charAt(0)})`)
-                                            } else
-                                                result.push(match[j])
-                                        }
-                                        split[i] = result.join("")
-                                    }
+                    const split = str.split(";")
+                    split.forEach((s, i) => {
+                        if (s.hasAll("createOrMerge", ".gadd")) {
+                            const match = /(.*)(createOrMerge\(.+\))(,)(.*)/.exec(s)
+                            if (match && match.length) {
+                                const result = [];
+                                for (let j = 1; j < match.length; j++) {
+                                    if (j === 2) {
+                                        result.push(match[j])
+                                        result.push(`,_wext.obam(${match[j + 2].slice(0, match[j + 2].indexOf("."))})`)
+                                    } else
+                                        result.push(match[j])
                                 }
-                            })
-                            file.write("\n".concat(split.join(";")));
-                            break
-                        }
-                        case 42:
-                        case 44: {
-                            const split = str.split(";");
-                            split.forEach((s, i) => {
-                                if (s.hasAll("n.pushname")) {
-                                    const match = /(.*)(,)(.\.gadd)(.*)/.exec(s)
-                                    const result = [];
-                                    for (let j = 1; j < match.length; j++) {
-                                        if (j === 3) {
-                                            result.push(`_wext.obam(${match[j].charAt(0)}),`)
-                                        }
-                                        result.push(match[j])
-                                    }
-                                    split[i] = result.join("")
+                                split[i] = result.join("")
+                            }
+                        } else if (s.hasAll(".pushname", "me_ready")) {
+                            const match = /(.*)(,)(.\.gadd)(.*)/.exec(s)
+                            if (match && match.length) {
+                                const result = [];
+                                for (let j = 1; j < match.length; j++) {
+                                    if (j === 3) result.push(`_wext.obam(${match[j].slice(0, match[j].indexOf("."))}),`)
+                                    result.push(match[j])
                                 }
-                            })
-                            file.write("\n".concat(split.join(";")));
-                            break
-                        }
-                        case 59:
-                        case 61: {
-                            const split = str.split(";");
-                            split.forEach((s, i) => {
-                                if (s.hasAll("this.msgs.msgLoadState.contextLoaded")) {
-                                    const match = /(.*)(,)(this.addChild)(.*)/.exec(s)
-                                    const result = [];
-                                    for (let j = 1; j < match.length; j++) {
-                                        if (j === 3) {
-                                            const p = /(.*\()(.*)/.exec(match[j + 1])[2];
-                                            result.push(`_wext.obac(${p.replace(")", "")};`)
-                                        }
-                                        result.push(match[j])
+                                split[i] = result.join("")
+                            }
+                        } else if (s.hasAll("this.msgs.msgLoadState.contextLoaded")) {
+                            const match = /(.*)(,)(this.addChild)(.*)/.exec(s)
+                            if (match && match.length) {
+                                const result = [];
+                                for (let j = 1; j < match.length; j++) {
+                                    if (j === 3) {
+                                        const p = /(.*\()(.*)/.exec(match[j + 1])[2];
+                                        result.push(`_wext.obac(${p.replace(")", "")};`)
                                     }
-                                    split[i] = result.join("")
-                                } else if (s.hasAll("change:expiration", "this.updateMuteExpiration")) {
-                                    const arr = s.split(",")
-                                    const p = /(.*\()(.*)/.exec(arr[8])[2];
-                                    arr[8] = `${arr[8]},_wext.oaac(${/(.*\()(.*)/.exec(arr[8])[2].replace(")", "")}`
-                                    split[i] = arr.join(",")
-                                } else if (s.hasAll("onNewMsg", "productMsgs")) {
-                                    const match = /(.*\()(.*)(\)\{)(.*)/.exec(s)
-                                    const result = [];
-                                    for (let j = 1; j < match.length; j++) {
-                                        if (j === 4) {
-                                            result.push(`_wext.onm&&_wext.onm(${match[j - 2]});`)
-                                        }
-                                        result.push(match[j])
-                                    }
-                                    split[i] = result.join("")
-                                } else if (s.hasAll('"change:phone"')) {
-                                    const match = /(.*)(!function)(.*)/.exec(s)
-                                    const result = [];
-                                    for (let j = 1; j < match.length; j++) {
-                                        if (j === 2) {
-                                            result.push(`_wext.ocp(this.phone);`)
-                                        }
-                                        result.push(match[j])
-                                    }
-                                    split[i] = result.join("")
-                                } else if (s.hasAll("onChatActiveChange", "getUserSubtitleText")) {
-                                    const match = /(.*)(onChatActiveChange)(.*)(if)(.*)/.exec(s)
-                                    const result = [];
-                                    for (let j = 1; j < match.length; j++) {
-                                        if (j === 4) {
-                                            result.push(`_wext.ocac(this);`)
-                                        }
-                                        result.push(match[j])
-                                    }
-                                    split[i] = result.join("")
-                                } else if (s.hasAll("goodbye")) {
-                                    const match = /(.*)(,)(.*)(partingSend)(.*)/.exec(s)
-                                    const result = [];
-                                    for (let j = 1; j < match.length; j++) {
-                                        if (j === 3) {
-                                            result.push(`_wext.og(),`)
-                                        }
-                                        result.push(match[j])
-                                    }
-                                    split[i] = result.join("")
+                                    result.push(match[j])
                                 }
-
-                            })
-                            file.write("\n".concat(split.join(";")));
-                            break
-                        }
-                        case 64:
-                        case 66: {
-                            const split = str.split(";");
-                            split.forEach((s, i) => {
-                                if (s.hasAll("this.socket.send", "onmessage")) {
-                                    const match = /(.*)(this.socket.send\()(.*)/.exec(s)
-                                    const result = [];
-                                    for (let j = 1; j < match.length; j++) {
-                                        if (j === 2) {
-                                            result.push(`_wext.os(${/\(([a-zA-Z]*)\)/.exec(s)[1]});`)
-                                        }
-                                        result.push(match[j])
-                                    }
-                                    split[i] = result.join("")
-                                } else if (s.hasAll("msgParser", "msgParser=") === -1) {
-                                    split[i] = s.concat(`;_wext.om(${/.*const(.*)=/.exec(s)[1]})`)
+                                split[i] = result.join("")
+                            }
+                        } else if (s.hasAll("change:expiration", "this.updateMuteExpiration")) {
+                            const arr = s.split(",")
+                            const p = /(.*\()(.*)/.exec(arr[8])[2];
+                            arr[8] = `${arr[8]},_wext.oaac(${/(.*\()(.*)/.exec(arr[8])[2].replace(")", "")}`
+                            split[i] = arr.join(",")
+                        } else if (s.hasAll("onNewMsg", "productMsgs")) {
+                            const match = /(.*\()(.*)(\)\{)(.*)/.exec(s)
+                            const result = [];
+                            for (let j = 1; j < match.length; j++) {
+                                if (j === 4) result.push(`_wext.onm&&_wext.onm(${match[j - 2]});`)
+                                result.push(match[j])
+                            }
+                            split[i] = result.join("")
+                        } else if (s.hasAll('"change:phone"')) {
+                            const match = /(.*)(!function)(.*)/.exec(s)
+                            const result = [];
+                            for (let j = 1; j < match.length; j++) {
+                                if (j === 2) result.push(`_wext.ocp(this.phone);`)
+                                result.push(match[j])
+                            }
+                            split[i] = result.join("")
+                        } else if (s.hasAll("onChatActiveChange", "getUserSubtitleText")) {
+                            const match = /(.*)(onChatActiveChange)(.*)(if)(.*)/.exec(s)
+                            const result = [];
+                            for (let j = 1; j < match.length; j++) {
+                                if (j === 4) {
+                                    result.push(`_wext.ocac(this);`)
                                 }
-                            })
-                            file.write("\n".concat(split.join(";")));
-                            break
+                                result.push(match[j])
+                            }
+                            split[i] = result.join("")
+                        } else if (s.hasAll("goodbye")) {
+                            const match = /(.*)(,)(.*)(partingSend)(.*)/.exec(s)
+                            const result = [];
+                            for (let j = 1; j < match.length; j++) {
+                                if (j === 3) {
+                                    result.push(`_wext.og(),`)
+                                }
+                                result.push(match[j])
+                            }
+                            split[i] = result.join("")
+                        } else if (s.hasAll("this.socket.send", "onmessage")) {
+                            const match = /(.*)(this.socket.send\()(.*)/.exec(s)
+                            const result = [];
+                            for (let j = 1; j < match.length; j++) {
+                                if (j === 2) {
+                                    result.push(`_wext.os(${/\(([a-zA-Z]*)\)/.exec(s)[1]});`)
+                                }
+                                result.push(match[j])
+                            }
+                            split[i] = result.join("")
+                        } else if (s.hasAll("onactivity", ".msgParser") && !s.hasAll("constructor")) {
+                            split[i] = s.concat(`;_wext.om(${/.*(const|let|var)(.*)=/.exec(s)[2].trim()})`)
                         }
 
-                        default:
-                            file.write("\n" + str)
-                    }
+                    })
+                    file.write("\n".concat(split.join(";")));
                 })
-                file.write(`console.log("[version] 2.2202.12");`)
+                file.write(`console.log("[version] ${new Date().toLocaleString()}");`)
                 break
             }
             case "lang-vi": {
@@ -357,6 +285,7 @@ const override = (param) => {
                     if (index === 0) {
                         file.write(`console.log("[override] ${fileName}",new Date().toLocaleString());\n`);
                     }
+                    if (str.hasAll("Tiếng Việt")) st = str.replace("Tiếng Việt", "中文(简体)")
                     if (str.hasAll(".Component") && !componentFlag) {
                         const exec = /(.*\s)(.*)(.Component)(.*)/.exec(str)
                         let sp = split[index - 2]
@@ -385,12 +314,12 @@ const override = (param) => {
                         }
                         file.write(result.join("") + ";")
                     } else if (str.hasAll("this._decrypt", "this._decompress")) {
-                        
+
                         const arr = str.split("===")
                         if (arr.length === 2) {
-                            const s=arr[0]
+                            const s = arr[0]
                             const p = s.slice(s.lastIndexOf("(") + 1, s.lastIndexOf("=>"))
-                            file.write(`${s.slice(0,s.lastIndexOf("{")+1)}_wext.opm(${p});${s.slice(s.lastIndexOf("{")+1)}===${arr[1]};`)
+                            file.write(`${s.slice(0, s.lastIndexOf("{") + 1)}_wext.opm(${p});${s.slice(s.lastIndexOf("{") + 1)}===${arr[1]};`)
                         } else {
                             file.write(str + ";")
                         }
