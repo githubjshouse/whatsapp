@@ -529,12 +529,8 @@ if (args && args.length) {
         switch (o[0].toLowerCase()) {
             case "whatsapp": {
                 files.forEach(s => {
-                    initParentDir(platform, "old").then(targetDir => {
-                        const target = path.join(targetDir, getFileName(s));
-                        downloadFileAsync(s, target).then(res=>{
-                            handle(o[0], target)
-                        })
-                    })                
+                   
+                   handle(o[0], s)               
                 })
                 break
             }
