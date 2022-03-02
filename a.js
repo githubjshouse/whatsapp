@@ -3,27 +3,18 @@ const path = require('path');
 const https = require("https");
 
 /**
-*
-* @param uri 下载文件路径
-* @param dest
-* @returns {Promise<string>}
-*/
-const downloadFileAsync = (uri, dest) => {
-var options = {
-    url: uri,  
-    encoding: "utf8" ,
-    headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36',
-        referer: 'https://bbs.125.la/'
-    }
-};
-	
+ *
+ * @param uri 下载文件路径
+ * @param dest
+ * @returns {Promise<string>}
+ */
+ const downloadFileAsync = (uri, dest) => {
     return new Promise((resolve, reject) => {
         // 确保dest路径存在
         const file = fs.createWriteStream(dest);
         https.get(uri, (res) => {
             if (res.statusCode !== 200) {
-                reject(res.statusCode);
+                reject(response.statusCode);
                 return;
             }
             res.on('end', () => {
@@ -42,11 +33,9 @@ var options = {
         });
     });
 }
-const target = "/data/git/js/serviceworker.js"
-let url = "https://web.whatsapp.com/serviceworker.js";
 
-downloadFileAsync(url, target).then(() => {
-console.log("download   success")
+downloadFileAsync("https://web.whatsapp.com/bootstrap_main.bae38defaa40d6391be1.js", path.join(__dirname,"old/aaa.js")).then(res=>{
 
 
-}).catch(console.log)
+        console.log(123)
+        }).catch(console.error)

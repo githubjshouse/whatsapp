@@ -529,7 +529,12 @@ if (args && args.length) {
         switch (o[0].toLowerCase()) {
             case "whatsapp": {
                 files.forEach(s => {
-                    handle(o[0], s)
+                    initParentDir(platform, "old").then(targetDir => {
+                        const target = path.join(targetDir, getFileName(s));
+                        downloadFileAsync(s, target).then(res=>{
+                            handle(o[0], target)
+                        })
+                    })                
                 })
                 break
             }
@@ -549,7 +554,8 @@ if (args && args.length) {
 }
 exports.initZaloRender = initZaloRender
 
-exports.initWhatsApp = function (...files) {
+exports.initWhatsApp = function (s) {
+
     files.forEach(s => {
         handle("whatsapp", s)
     })
