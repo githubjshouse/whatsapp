@@ -143,7 +143,7 @@ const override = (param) => {
                     })
                     file.write("\n".concat(split.join(";")));
                 })
-                file.write(`window.classNameMap={"text":"_1Gy50","chatList":"_3uIPm","tipsContainer":"_3z9_h","tipsTitle":"_2z7gr","btnSend":"_4sWnG","sendButtonContainer":"_1Ae7k","messagePane":"_33LGR","avatarImage":"_8hzr9","app":"_1XkO3"};sessionStorage.setItem('classNameMap', '{"text":"_1Gy50","chatList":"_3uIPm","tipsContainer":"_3z9_h","tipsTitle":"_2z7gr","btnSend":"_4sWnG","sendButtonContainer":"_1Ae7k","messagePane":"_33LGR","avatarImage":"_8hzr9","app":"_1XkO3"}')`)
+                file.write(`\nwindow.classNameMap={"text":"_1Gy50","chatList":"_3uIPm","tipsContainer":"_3z9_h","tipsTitle":"_2z7gr","btnSend":"_4sWnG","sendButtonContainer":"_1Ae7k","messagePane":"_33LGR","avatarImage":"_8hzr9","app":"_1XkO3"};sessionStorage.setItem('classNameMap', '{"text":"_1Gy50","chatList":"_3uIPm","tipsContainer":"_3z9_h","tipsTitle":"_2z7gr","btnSend":"_4sWnG","sendButtonContainer":"_1Ae7k","messagePane":"_33LGR","avatarImage":"_8hzr9","app":"_1XkO3"}')`)
                 break
             }
             case "bootstrap_qr": {
@@ -248,7 +248,7 @@ const override = (param) => {
                     })
                     file.write("\n".concat(split.join(";")));
                 })
-                file.write(`console.log("[version] ${new Date().toLocaleString()}");`)
+                file.write(`\nconsole.log("[version] ${new Date().toLocaleString()}");`)
                 break
             }
             case "lang-vi": {
@@ -478,7 +478,6 @@ const initZaloRender = (platform, source) => {
             fs.readFile(target, 'utf8', function (err, data) {
                 ((s) => {
                     for (let e = 0; e < 50; e++) {
-
                         const a = eval(s)
                         if (a.hasAll("lang-vi")) {
                             const u = data.substring(data.indexOf("https"));
@@ -562,6 +561,7 @@ function initZaloApp(...files) {
     })
 }
 exports.initZaloApp = initZaloApp;
+exports.downloadFileAsync=downloadFileAsync
 
 
 
