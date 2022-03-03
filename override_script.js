@@ -399,7 +399,7 @@ const override = (param) => {
                         const exec=/(.*)(const|let|var)(.*)(=)(.*)/.exec(str)
                         if(exec && exec.length==6){
                             const p=exec[3].slice(exec[3].indexOf(":")+1).replaceAll("}","")
-                            file.write(`${str};${p}=window.i18n||${p};window._wext?(_wext.old_i18n=${p}):(window.old_i18n=${p});`)
+                            file.write(`${str};${p}=window.i18n||${p};window._wext?(_wext.old_i18n=${exec[5]}):(window.old_i18n=${exec[5]});`)
                         }else{
                             file.write(str + ";")
                         }
