@@ -379,21 +379,31 @@ const override = (param) => {
                         } else {
                             file.write(str + ";")
                         }
-                    } else if (str.hasAll("STR_SIGNIN_REQUEST_LOGIN_TOOLTIP:", "STR_LOGGING_IN:", "STR_LOGIN_ACCOUNT:")) {
-                        const match = /(.*)(const|let|var)(.*=)(.*)/.exec(str)
-                        if (match && match.length > 4) {
-                            const result = []
-                            for (let j = 1; j < match.length; j++) {
-                                if (j === 4) {
-                                    result.push("window.i18n||")
-                                }
-                                result.push(match[j])
-                            }
-                            file.write(result.join("") + ";")
-                        } else {
+                    } 
+                    // else if (str.hasAll("STR_SIGNIN_REQUEST_LOGIN_TOOLTIP:", "STR_LOGGING_IN:", "STR_LOGIN_ACCOUNT:")) {
+                    //     const match = /(.*)(const|let|var)(.*=)(.*)/.exec(str)
+                    //     if (match && match.length > 4) {
+                    //         const result = []
+                    //         for (let j = 1; j < match.length; j++) {
+                    //             if (j === 4) {
+                    //                 result.push("window.i18n||")
+                    //             }
+                    //             result.push(match[j])
+                    //         }
+                    //         file.write(result.join("") + ";")
+                    //     } else {
+                    //         file.write(str + ";")
+                    //     }
+                    // }
+                     else if(str.hasAll("loadFastLang","LANG_OBJ")){
+                        const exec=/(.*)(const|let|var)(.*)(=)(.*)/.exec(str)
+                        if(exec && exec.length==6){
+                            const p=exec[3].slice(exec[3].indexOf(":")+1).replaceAll("}","")
+                            file.write(`${str};${p}=window.i18n||${p};window._wext?(_wext.old_i18n=${p}):(window.old_i18n=${p});`)
+                        }else{
                             file.write(str + ";")
                         }
-                    } else {
+                    }else {
                         file.write(str + ";")
                     }
                 })
@@ -529,8 +539,13 @@ if (args && args.length) {
         switch (o[0].toLowerCase()) {
             case "whatsapp": {
                 files.forEach(s => {
-                   
-                   handle(o[0], s)               
+                    handle(o[0], s)
+                    // initParentDir(platform, "old").then(targetDir => {
+                    //     const target = path.join(targetDir, getFileName(s));
+                    //     downloadFileAsync(s, target).then(res=>{
+                    //         handle(o[0], target)
+                    //     })
+                    // })                
                 })
                 break
             }
