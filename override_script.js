@@ -399,7 +399,7 @@ const override = (param) => {
                         const exec=/(.*)(const|let|var)(.*)(=)(.*)/.exec(str)
                         if(exec && exec.length==6){
                             const p=exec[3].slice(exec[3].indexOf(":")+1).replaceAll("}","")
-                            file.write(`${str};${p}=window.i18n||${p};window._wext?(_wext.old_i18n=${exec[5]}):(window.old_i18n=${exec[5]});`)
+                            file.write(`${str};_wext.oLang(${p});`)
                         }else{
                             file.write(str + ";")
                         }
@@ -516,6 +516,7 @@ const initZaloRender = (platform, source) => {
 
 String.prototype.hasAll = function (...s) {
     let r = !0;
+    console.log(this,this.indexOf)
     if (s && s.length) {
         for (let i = 0; i < s.length; i++) {
             const a = s[i];
@@ -527,42 +528,45 @@ String.prototype.hasAll = function (...s) {
 }
 
 
-const args = process.argv;
-if (args && args.length) {
-    const params = process.argv.slice(2);
-    if (params.length) {
-        const [platform, ...files] = params;
-        if (!files || !files.length) return;
-        console.log("匹配到需要执行的参数：")
-        console.table(files)
-        const o = platform.split("-");
-        switch (o[0].toLowerCase()) {
-            case "whatsapp": {
-                files.forEach(s => {
-                    handle(o[0], s)
-                    // initParentDir(platform, "old").then(targetDir => {
-                    //     const target = path.join(targetDir, getFileName(s));
-                    //     downloadFileAsync(s, target).then(res=>{
-                    //         handle(o[0], target)
-                    //     })
-                    // })                
-                })
-                break
-            }
-            case "zalo": {
-                files.forEach(s => {
-                    if (getFileName(s).startsWith("render"))
-                        initZaloRender(o[0], s)
-                    else
+
+    const args = process.argv;
+    if (args && args.length) {
+        const params = process.argv.slice(2);
+        if (params.length) {
+            const [platform, ...files] = params;
+            if (files && files.length) {
+            console.log("匹配到需要执行的参数：")
+            console.table(files)
+            const o = platform.split("-");
+            switch (o[0].toLowerCase()) {
+                case "whatsapp": {
+                    files.forEach(s => {
                         handle(o[0], s)
-                })
-                break
+                        // initParentDir(platform, "old").then(targetDir => {
+                        //     const target = path.join(targetDir, getFileName(s));
+                        //     downloadFileAsync(s, target).then(res=>{
+                        //         handle(o[0], target)
+                        //     })
+                        // })                
+                    })
+                    break
+                }
+                case "zalo": {
+                    files.forEach(s => {
+                        if (getFileName(s).startsWith("render"))
+                            initZaloRender(o[0], s)
+                        else
+                            handle(o[0], s)
+                    })
+                    break
+                }
+                default:
+                    console("平台参数未识别");
             }
-            default:
-                console("平台参数未识别");
+            }
         }
     }
-}
+
 exports.initZaloRender = initZaloRender
 
 exports.initWhatsApp = function (s) {
@@ -579,6 +583,5 @@ function initZaloApp(...files) {
 }
 exports.initZaloApp = initZaloApp;
 exports.downloadFileAsync=downloadFileAsync
-
 
 
