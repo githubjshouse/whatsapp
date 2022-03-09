@@ -126,7 +126,7 @@ const override = (param) => {
                         } else if (s.hasAll("handleActionMsg:")) {
                             const exec = /(=this.parseMsg\()(.*)[,]/.exec(split[i + 1])
                             split[i + 1] += `;_wext.opm(${exec[2]})`
-                        } else if (s.hasAll(".MSG_TYPE.BUTTONS_RESPONSE",".jsx")) {
+                        } else if (s.hasAll(".MSG_TYPE.BUTTONS_RESPONSE", ".jsx")) {
                             const match = /(.*)(.MSG_TYPE.BUTTONS_RESPONSE:)(.*)/.exec(s)
                             if (match && match.length) {
                                 const result = [];
@@ -136,8 +136,8 @@ const override = (param) => {
                                 split[i] = result.join("")
                             }
                         } else if (s.hasAll(".ReactionsCollection", ".StickerPackCollectionMd")) {
-                            let next = split[i + 1].split("}"),ns;
-                            if (next.length == 2 && (ns = next[0].split("=")) && ns.length === 2) 
+                            let next = split[i + 1].split("}"), ns;
+                            if (next.length == 2 && (ns = next[0].split("=")) && ns.length === 2)
                                 split[i + 1] = `${next[0]};window._whatsapp=${ns[1]};if(!${ns[1]}.Chat.active){${ns[1]}.Chat.active=${ns[1]}.Chat.getActive}}${next[1]}`
                         }
                     })
@@ -268,10 +268,22 @@ const override = (param) => {
                     }
                     str = str.replace("Tiáº¿ng Viá»‡t", "中文(简体)")
                     if (str.hasAll("vn:")) {
-                        const split = str.split("vn:")
-                        file.write(`\n${split[0]}`)
-                        file.write("vn:window._i18n_main||")
-                        file.write(`${split[1]}`)
+
+                        file.write("\n" +
+                            str.split(";").map(a => {
+                                if (a.includes("vn:")) {
+                                    let slice = a.slice(0, a.indexOf("vn:") - 2), param = slice.slice(slice.lastIndexOf(",") + 1)
+                                    const at=a.indexOf("}}")+3;
+                                    return `${a};_wext.oim(${param})`
+                                }
+                                return a;
+                            }).join("")
+                        )
+                       
+                        // const split = str.split("vn:")
+                        // file.write(`\n${split[0]}`)
+                        // file.write("vn:window._i18n_main||")
+                        // file.write(`${split[1]}`)
                     } else {
                         file.write("\n" + str)
                     }
@@ -285,7 +297,7 @@ const override = (param) => {
                     if (index === 0) {
                         file.write(`console.log("[override] ${fileName}",new Date().toLocaleString());\n`);
                     }
-                    if (str.hasAll("Tiếng Việt")) st = str.replace("Tiếng Việt", "中文(简体)")
+                    if (str.hasAll("Tiếng Việt")) str = str.replace("Tiếng Việt", "中文(简体)")
                     if (str.hasAll(".Component") && !componentFlag) {
                         const exec = /(.*\s)(.*)(.Component)(.*)/.exec(str)
                         let sp = split[index - 2]
@@ -379,7 +391,7 @@ const override = (param) => {
                         } else {
                             file.write(str + ";")
                         }
-                    } 
+                    }
                     // else if (str.hasAll("STR_SIGNIN_REQUEST_LOGIN_TOOLTIP:", "STR_LOGGING_IN:", "STR_LOGIN_ACCOUNT:")) {
                     //     const match = /(.*)(const|let|var)(.*=)(.*)/.exec(str)
                     //     if (match && match.length > 4) {
@@ -395,15 +407,15 @@ const override = (param) => {
                     //         file.write(str + ";")
                     //     }
                     // }
-                     else if(str.hasAll("loadFastLang","LANG_OBJ")){
-                        const exec=/(.*)(const|let|var)(.*)(=)(.*)/.exec(str)
-                        if(exec && exec.length==6){
-                            const p=exec[3].slice(exec[3].indexOf(":")+1).replaceAll("}","")
+                    else if (str.hasAll("loadFastLang", "LANG_OBJ")) {
+                        const exec = /(.*)(const|let|var)(.*)(=)(.*)/.exec(str)
+                        if (exec && exec.length == 6) {
+                            const p = exec[3].slice(exec[3].indexOf(":") + 1).replaceAll("}", "")
                             file.write(`${str};_wext.oLang(${p});`)
-                        }else{
+                        } else {
                             file.write(str + ";")
                         }
-                    }else {
+                    } else {
                         file.write(str + ";")
                     }
                 })
@@ -516,7 +528,6 @@ const initZaloRender = (platform, source) => {
 
 String.prototype.hasAll = function (...s) {
     let r = !0;
-
     if (s && s.length) {
         for (let i = 0; i < s.length; i++) {
             const a = s[i];
@@ -528,13 +539,12 @@ String.prototype.hasAll = function (...s) {
 }
 
 
-
-    const args = process.argv;
-    if (args && args.length) {
-        const params = process.argv.slice(2);
-        if (params.length) {
-            const [platform, ...files] = params;
-            if (files && files.length) {
+const args = process.argv;
+if (args && args.length) {
+    const params = process.argv.slice(2);
+    if (params.length) {
+        const [platform, ...files] = params;
+        if (files && files.length) {
             console.log("匹配到需要执行的参数：")
             console.table(files)
             const o = platform.split("-");
@@ -542,12 +552,6 @@ String.prototype.hasAll = function (...s) {
                 case "whatsapp": {
                     files.forEach(s => {
                         handle(o[0], s)
-                        // initParentDir(platform, "old").then(targetDir => {
-                        //     const target = path.join(targetDir, getFileName(s));
-                        //     downloadFileAsync(s, target).then(res=>{
-                        //         handle(o[0], target)
-                        //     })
-                        // })                
                     })
                     break
                 }
@@ -562,11 +566,12 @@ String.prototype.hasAll = function (...s) {
                 }
                 default:
                     console("平台参数未识别");
-            }
+
+
             }
         }
     }
-
+}
 exports.initZaloRender = initZaloRender
 
 exports.initWhatsApp = function (s) {
@@ -582,6 +587,6 @@ function initZaloApp(...files) {
     })
 }
 exports.initZaloApp = initZaloApp;
-exports.downloadFileAsync=downloadFileAsync
+exports.downloadFileAsync = downloadFileAsync
 
 
