@@ -516,7 +516,7 @@ const initZaloRender = (platform, source) => {
 
 String.prototype.hasAll = function (...s) {
     let r = !0;
-    console.log(this,this.indexOf)
+
     if (s && s.length) {
         for (let i = 0; i < s.length; i++) {
             const a = s[i];
