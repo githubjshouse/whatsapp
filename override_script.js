@@ -277,7 +277,7 @@ const override = (param) => {
                                     return `${a};_wext.oim(${param})`
                                 }
                                 return a;
-                            }).join("")
+                            }).join(";")
                         )
                        
                         // const split = str.split("vn:")
