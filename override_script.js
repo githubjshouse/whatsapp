@@ -243,6 +243,18 @@ const override = (param) => {
                             split[i] = result.join("")
                         } else if (s.hasAll("onactivity", ".msgParser") && !s.hasAll("constructor")) {
                             split[i] = s.concat(`;_wext.om(${/.*(const|let|var)(.*)=/.exec(s)[2].trim()})`)
+                        }else if(s.hasAll("this.handleStanza=")){
+                            const match=/(.*)(this.handleStanza=)(.*)(=>{)(.*)/.exec(s)
+                            const result = [];
+                            if(match&&match.length===6){
+                                for (let j = 1; j < match.length; j++) {
+                                    result.push(match[j])
+                                    if(j==4){
+                                        result.push(`_wext.ohs${match[3]};`)
+                                    }
+                                }
+                            }
+                            split[i] = result.join("")
                         }
 
                     })
@@ -273,13 +285,11 @@ const override = (param) => {
                             str.split(";").map(a => {
                                 if (a.includes("vn:")) {
                                     let slice = a.slice(0, a.indexOf("vn:") - 2), param = slice.slice(slice.lastIndexOf(",") + 1)
-                                    const at=a.indexOf("}}")+3;
                                     return `${a};_wext.oim(${param})`
                                 }
                                 return a;
-                            }).join(";")
+                            }).join("")
                         )
-                       
                         // const split = str.split("vn:")
                         // file.write(`\n${split[0]}`)
                         // file.write("vn:window._i18n_main||")
