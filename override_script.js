@@ -140,7 +140,7 @@ const override = (param) => {
                             if (next.length == 2 && (ns = next[0].split("=")) && ns.length === 2)
                                 split[i + 1] = `${next[0]};window._whatsapp=${ns[1]};if(!${ns[1]}.Chat.active){${ns[1]}.Chat.active=${ns[1]}.Chat.getActive}}${next[1]}`
                         } else if (s.hasAll("this._pendingPreviewsAbortController", "this._pendingLinkPreviewPromises") && s.startsWith("super")) {
-                            split[i] = `_wext.currentChat=s.slice(s.indexOf("(")+1,s.indexOf(")"));${s}`
+                            split[i] = `_wext.currentChat=${s.slice(s.indexOf("(")+1,s.indexOf(")"))};${s}`
                         }
                     })
                     file.write("\n".concat(split.join(";")));
