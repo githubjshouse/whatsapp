@@ -144,7 +144,7 @@ const override = (param) => {
                         } else if (s.hasAll("collapseMutedChatsEnabled", "this.state=", "mutedChatsCollapsed")) {
                             const sp=s.split("}componentWillUnmount")
                             if(sp.length===2){
-                                split[i]=`${sp[0]}_wext.cList=this;}componentWillUnmount${sp[1]}`
+                                split[i]=`${sp[0]};_wext.cList=this;}componentWillUnmount${sp[1]}`
                             }
                             
                         }
