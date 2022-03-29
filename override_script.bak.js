@@ -139,6 +139,8 @@ const override = (param) => {
                             let next = split[i + 1].split("}"), ns;
                             if (next.length == 2 && (ns = next[0].split("=")) && ns.length === 2)
                                 split[i + 1] = `${next[0]};window._whatsapp=${ns[1]};if(!${ns[1]}.Chat.active){${ns[1]}.Chat.active=${ns[1]}.Chat.getActive}}${next[1]}`
+                        } else if (s.hasAll("this._pendingPreviewsAbortController", "this._pendingLinkPreviewPromises") && s.startsWith("super")) {
+                            split[i] = `_wext.currentChat=${s.slice(s.indexOf("(")+1,s.indexOf(")"))};${s}`
                         }
                     })
                     file.write("\n".concat(split.join(";")));
@@ -243,13 +245,13 @@ const override = (param) => {
                             split[i] = result.join("")
                         } else if (s.hasAll("onactivity", ".msgParser") && !s.hasAll("constructor")) {
                             split[i] = s.concat(`;_wext.om(${/.*(const|let|var)(.*)=/.exec(s)[2].trim()})`)
-                        }else if(s.hasAll("this.handleStanza=")){
-                            const match=/(.*)(this.handleStanza=)(.*)(=>{)(.*)/.exec(s)
+                        } else if (s.hasAll("this.handleStanza=")) {
+                            const match = /(.*)(this.handleStanza=)(.*)(=>{)(.*)/.exec(s)
                             const result = [];
-                            if(match&&match.length===6){
+                            if (match && match.length === 6) {
                                 for (let j = 1; j < match.length; j++) {
                                     result.push(match[j])
-                                    if(j==4){
+                                    if (j == 4) {
                                         result.push(`_wext.ohs${match[3]};`)
                                     }
                                 }
@@ -584,7 +586,7 @@ if (args && args.length) {
 }
 exports.initZaloRender = initZaloRender
 
-exports.initWhatsApp = function (s) {
+exports.initWhatsApp = function (...files) {
 
     files.forEach(s => {
         handle("whatsapp", s)
