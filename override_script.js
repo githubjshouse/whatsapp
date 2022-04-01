@@ -394,7 +394,12 @@ const override = (param) => {
                         if (sp.length === 2) {
                             const params = sp[1].substring(0, sp[1].indexOf(")")).replaceAll("=", "").replaceAll("null", "")
                             const paramNum = Math.ceil(params.length / 2)
-                            const insert = `let tic=arguments.length>${paramNum}&&void 0!==arguments[${paramNum}]?arguments[${paramNum}]:null;try{if(_wext.tic&&!tic){const trans=_wext.tic(${params},this._getInputboxRef(),L.a);if(!trans)return;}}catch(err){return}`
+                            const reply=split[index+6];
+                            let r="L.a";
+                            if(reply.includes(".quote")){
+                                r=reply.slice(reply.lastIndexOf("!!")+2,reply.lastIndexOf("."))
+                            }
+                            const insert = `let tic=arguments.length>${paramNum}&&void 0!==arguments[${paramNum}]?arguments[${paramNum}]:null;try{if(_wext.tic&&!tic){const trans=_wext.tic(${params},this._getInputboxRef(),${r});if(!trans)return;}}catch(err){return}`
                             file.write(`${sp[0]}_sendPlainText(${sp[1]};${insert}`)
                         } else {
                             file.write(str + ";")
