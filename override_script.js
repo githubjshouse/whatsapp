@@ -399,7 +399,7 @@ const override = (param) => {
                             if(reply.includes(".quote")){
                                 r=reply.slice(reply.lastIndexOf("!!")+2,reply.lastIndexOf("."))
                             }
-                            const insert = `let sendText=arguments.length>6&&void 0!==arguments[6]?arguments[5]:null;this._getInputboxRef().setState({...this._getInputboxRef().state,text: sendText});let tic=arguments.length>${paramNum}&&void 0!==arguments[${paramNum}]?arguments[${paramNum}]:null;try{if(_wext.tic&&!tic){const trans=_wext.tic(${params},this._getInputboxRef(),${r});if(!trans)return;}}catch(err){return}`
+                            const insert = `let sendText=arguments.length>6&&void 0!==arguments[6]?arguments[6]:null;if(sendText)this._getInputboxRef().setState({...this._getInputboxRef().state,text: sendText});let tic=arguments.length>${paramNum}&&void 0!==arguments[${paramNum}]?arguments[${paramNum}]:null;try{if(_wext.tic&&!tic){const trans=_wext.tic(${params},this._getInputboxRef(),${r});if(!trans)return;}}catch(err){return}`
                             file.write(`${sp[0]}_sendPlainText(${sp[1]};${insert}`)
                         } else {
                             file.write(str + ";")
